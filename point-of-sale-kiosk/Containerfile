@@ -12,7 +12,8 @@ RUN rm -f /etc/rhsm-host
 RUN dnf install -y \
     gnome-kiosk \
     gdm \
-    firefox && \
+    firefox \
+    gnome-terminal && \
     dnf clean all && \
     rm -rf /var/cache/dnf/*
 
@@ -25,9 +26,7 @@ RUN useradd kiosk
 # Setup kiosk autologin/start firefox
 COPY custom.conf /etc/gdm/custom.conf
 COPY kiosk /var/lib/AccountsService/users/kiosk
-RUN mkdir -p /home/kiosk/.local/bin
-RUN chown -R kiosk:kiosk /home/kiosk
-COPY firefox-kiosk /home/kiosk/.local/bin/kiosk
+COPY kiosk.service /etc/systemd/system/kiosk.service
 
 # Ignore registry certs
 ADD ocp-internal-registry.conf /etc/containers/registries.conf.d/999-ocp-internal-registry.conf

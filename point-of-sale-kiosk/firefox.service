@@ -1,0 +1,13 @@
+[Unit]
+Description=FirefoxInKiosk
+After=multi-user.target network.target
+
+[Service]
+Type=simple
+ExecStart=firefox --kiosk http://localhost:8080 --display :0
+Restart=always
+RestartSec=30
+User=kiosk
+
+[Install]
+WantedBy=multi-user.target
