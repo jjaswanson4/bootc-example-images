@@ -26,7 +26,7 @@ RUN useradd kiosk
 # Setup kiosk autologin/start firefox
 COPY custom.conf /etc/gdm/custom.conf
 COPY kiosk /var/lib/AccountsService/users/kiosk
-COPY kiosk.service /etc/systemd/system/kiosk.service
+COPY firefox.service /etc/systemd/system/firefox.service
 
 # Ignore registry certs
 ADD ocp-internal-registry.conf /etc/containers/registries.conf.d/999-ocp-internal-registry.conf
