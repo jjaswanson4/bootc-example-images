@@ -1,0 +1,4 @@
+[User]
+
+Session=com.redhat.Kiosk
+SystemAccount=false
