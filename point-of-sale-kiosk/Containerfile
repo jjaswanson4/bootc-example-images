@@ -27,6 +27,7 @@ RUN useradd kiosk
 COPY custom.conf /etc/gdm/custom.conf
 COPY kiosk /var/lib/AccountsService/users/kiosk
 COPY firefox.service /etc/systemd/system/firefox.service
+RUN systemctl enable firefox.service
 
 # Ignore registry certs
 ADD ocp-internal-registry.conf /etc/containers/registries.conf.d/999-ocp-internal-registry.conf
