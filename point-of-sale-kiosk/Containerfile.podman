@@ -1,0 +1,43 @@
+FROM registry.redhat.io/rhel9/rhel-bootc:9.5
+
+USER 0
+
+# # Add registry auth
+# ADD .registry-auth/auth.json /usr/lib/container-auth.json
+# RUN chmod 0600 /usr/lib/container-auth.json && \
+#     ln -sr /usr/lib/container-auth.json /etc/ostree/auth.json
+
+# Install kiosk-mode packages
+# RUN rm -f /etc/rhsm-host
+RUN dnf install -y \
+    gnome-kiosk \
+    gdm \
+    firefox \
+    gnome-terminal && \
+    dnf clean all && \
+    rm -rf /var/cache/dnf/*
+
+# Set graphical target
+RUN systemctl set-default graphical.target
+
+# Create kiosk user
+RUN useradd kiosk
+
+# Setup kiosk autologin/start firefox
+COPY custom.conf /etc/gdm/custom.conf
+COPY kiosk /var/lib/AccountsService/users/kiosk
+COPY firefox.service /etc/systemd/system/firefox.service
+RUN systemctl enable firefox.service
+
+# Ignore registry certs
+ADD ocp-internal-registry.conf /etc/containers/registries.conf.d/999-ocp-internal-registry.conf
+
+# Add quadlet files
+COPY point-of-sale.kube /etc/containers/systemd/point-of-sale.kube
+COPY point-of-sale.yaml /etc/containers/systemd/point-of-sale.yaml
+
+# Disable auto-updates
+RUN systemctl mask bootc-fetch-apply-updates.timer
+
+# Lint the build
+RUN bootc container lint
